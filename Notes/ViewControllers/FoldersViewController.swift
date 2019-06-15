@@ -17,11 +17,7 @@ class FoldersViewController: BaseTableViewController {
     var folders = [Folder]() {
         didSet {
             DispatchQueue.main.async {
-                if !self.folders.isEmpty {
-                    self.navigationItem.rightBarButtonItem?.isEnabled = true
-                } else {
-                    self.navigationItem.rightBarButtonItem?.isEnabled = false
-                }
+                self.navigationItem.rightBarButtonItem?.isEnabled = !self.folders.isEmpty
                 self.tableView.reloadData()
             }
         }
@@ -51,10 +47,8 @@ class FoldersViewController: BaseTableViewController {
 
         // save folder to array, but make sure folder.name does not already exist.
         if let name = name {
-            let id = UUID().uuidString
-
             if !self.folders.contains(where: { ($0.name == name) }) {
-                self.folders.append(Folder(id: id, name: name, notes: nil))
+                self.folders.append(Folder(name: name, notes: nil))
             } else {
                 alertWithOKButton(title: "Name Taken", message: "Please choose a different name.")
             }
@@ -71,7 +65,6 @@ class FoldersViewController: BaseTableViewController {
 
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
-        dump("setting \(editing)")
         tableView.setEditing(editing, animated: true)
     }
 
@@ -82,6 +75,7 @@ class FoldersViewController: BaseTableViewController {
             textfield.placeholder = "Name"
             textfield.autocapitalizationType = .sentences
             textfield.tintColor = .gold
+            textfield.autocapitalizationType = .words
             textfield.addTarget(self, action: #selector(self?.alertTextFieldDidChange(_:)), for: .editingChanged)
         }
 
@@ -141,7 +135,7 @@ extension FoldersViewController {
             cell.backgroundColor = .clear
             cell.textLabel?.text = folder.name
             cell.detailTextLabel?.text = "0"
-            cell.textLabel?.font = UIFont(name: "Heiti TC", size: 22)
+            cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .body)
         return cell
     }
 

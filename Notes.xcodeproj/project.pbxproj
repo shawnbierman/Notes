@@ -19,6 +19,7 @@
 		1FF98E5722B5480F00D5DFC5 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF98E5622B5480F00D5DFC5 /* UIColor.swift */; };
 		1FF98E5822B548BA00D5DFC5 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF98E5322B5478000D5DFC5 /* Folder.swift */; };
 		1FF98E5922B548BB00D5DFC5 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF98E5522B5478400D5DFC5 /* UIView.swift */; };
+		1FF98E5C22B592B700D5DFC5 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF98E5B22B592B700D5DFC5 /* Note.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		1FF98E5322B5478000D5DFC5 /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
 		1FF98E5522B5478400D5DFC5 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		1FF98E5622B5480F00D5DFC5 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
+		1FF98E5B22B592B700D5DFC5 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,9 +109,9 @@
 		1FF98E1B22B5471E00D5DFC5 /* Notes */ = {
 			isa = PBXGroup;
 			children = (
+				1FF98E5A22B548D600D5DFC5 /* ViewControllers */,
 				1FF98E5222B5478000D5DFC5 /* Models */,
 				1FF98E5422B5478400D5DFC5 /* Extensions */,
-				1FF98E5A22B548D600D5DFC5 /* ViewControllers */,
 				1FF98E1C22B5471E00D5DFC5 /* AppDelegate.swift */,
 				1FF98E2322B5471F00D5DFC5 /* Assets.xcassets */,
 				1FF98E2522B5471F00D5DFC5 /* LaunchScreen.storyboard */,
@@ -140,6 +142,7 @@
 			isa = PBXGroup;
 			children = (
 				1FF98E5322B5478000D5DFC5 /* Folder.swift */,
+				1FF98E5B22B592B700D5DFC5 /* Note.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -174,6 +177,7 @@
 				1FF98E1522B5471E00D5DFC5 /* Sources */,
 				1FF98E1622B5471E00D5DFC5 /* Frameworks */,
 				1FF98E1722B5471E00D5DFC5 /* Resources */,
+				1FF98E5D22B592C900D5DFC5 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -289,6 +293,26 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		1FF98E5D22B592C900D5DFC5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		1FF98E1522B5471E00D5DFC5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -299,6 +323,7 @@
 				1FF98E5722B5480F00D5DFC5 /* UIColor.swift in Sources */,
 				1FF98E5122B5477900D5DFC5 /* FoldersViewController.swift in Sources */,
 				1FF98E4E22B5477900D5DFC5 /* BaseTableViewController.swift in Sources */,
+				1FF98E5C22B592B700D5DFC5 /* Note.swift in Sources */,
 				1FF98E4F22B5477900D5DFC5 /* NoteViewController.swift in Sources */,
 				1FF98E1D22B5471E00D5DFC5 /* AppDelegate.swift in Sources */,
 				1FF98E5822B548BA00D5DFC5 /* Folder.swift in Sources */,

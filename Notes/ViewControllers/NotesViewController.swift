@@ -12,7 +12,9 @@ class NotesViewController: BaseTableViewController {
 
     var notes = [Note]() {
         didSet {
-            if !notes.isEmpty { navigationItem.rightBarButtonItem?.isEnabled = true }
+            if !notes.isEmpty {
+                navigationItem.rightBarButtonItem?.isEnabled = true
+            }
         }
     }
 
@@ -21,8 +23,8 @@ class NotesViewController: BaseTableViewController {
         setupNavigationAndToolBar()
     }
 
-    @objc internal func editButtonTapped() {
-        print("tapped in folders view...")
+    @objc internal func editNotesButtonTapped() {
+        dump("editNotesButtonTapped()")
     }
 
     @objc fileprivate func createNewFile() {
@@ -30,8 +32,8 @@ class NotesViewController: BaseTableViewController {
         navigationController?.pushViewController(controller, animated: true)
     }
 
-    @objc fileprivate func showAttachments() {
-        print("showing attachments")
+    @objc fileprivate func showNotesAttachments() {
+        dump("showNotesAttachments()")
     }
 
     fileprivate func setupNavigationAndToolBar() {
@@ -41,7 +43,7 @@ class NotesViewController: BaseTableViewController {
         navigationItem.rightBarButtonItem?.isEnabled = false
 
         let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
-        let attach = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(showAttachments))
+        let attach = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(showNotesAttachments))
             attach.tintColor = .gold
         let count = UIBarButtonItem(title: "0 Notes", style: .done, target: self, action: nil)
             count.setTitleTextAttributes([NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10),
@@ -54,10 +56,16 @@ class NotesViewController: BaseTableViewController {
     }
 }
 
+/// MARK - Table view delegate/datasource methods
 extension NotesViewController {
 
-    override func numberOfSections(in tableView: UITableView) -> Int { return 1 }
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return notes.count }
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return notes.count
+    }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let controller = NoteViewController()

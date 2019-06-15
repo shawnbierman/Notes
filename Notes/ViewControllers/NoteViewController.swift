@@ -23,7 +23,7 @@ class NoteViewController: UIViewController {
         let tv = UITextView()
         tv.backgroundColor = .clear
         tv.translatesAutoresizingMaskIntoConstraints = false
-        tv.font = UIFont.systemFont(ofSize: 22)
+        tv.font = UIFont.preferredFont(forTextStyle: .body)
         return tv
     }()
 
@@ -38,7 +38,7 @@ class NoteViewController: UIViewController {
     }
 
     @objc fileprivate func handleActionButton() {
-        dump("action button")
+        dump("handleActionButton()")
     }
 
     @objc fileprivate func handleDoneButton() {
@@ -47,7 +47,7 @@ class NoteViewController: UIViewController {
     }
 
     fileprivate func saveNote() {
-        print("Saving note")
+        dump("saveNote()")
     }
 
     fileprivate func setupViews() {

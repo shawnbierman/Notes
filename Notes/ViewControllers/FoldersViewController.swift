@@ -11,10 +11,12 @@ import UIKit
 class FoldersViewController: BaseTableViewController {
 
     let defaults = UserDefaults.standard
-    let kNotesFolderKey = "folders"
+    let fileManager = FileManager.default
+    let documentDir = FileManager.documentDirectoryUrl
+
     var dialog: UIAlertController?
 
-    var folders = [Folder]() {
+    var folders = [URL]() {
         didSet {
             DispatchQueue.main.async {
                 self.navigationItem.rightBarButtonItem?.isEnabled = !self.folders.isEmpty
@@ -25,41 +27,33 @@ class FoldersViewController: BaseTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         self.title = "Folders"
 
         setupNavigationAndToolBar()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         loadFolders()
     }
 
     fileprivate func loadFolders() {
-        if let savedData = defaults.object(forKey: kNotesFolderKey) as? Data {
-            let jsonDecoder = JSONDecoder()
-            do {
-                folders = try jsonDecoder.decode([Folder].self, from: savedData)
-            } catch {
-                alertWithOKButton(title: "Failure", message: "Failed to load folders.")
-            }
+        print("loading folders...")
+        do {
+            folders = try fileManager.contentsOfDirectory(at: documentDir, includingPropertiesForKeys: nil)
+        } catch {
+            alertWithOKButton(title: "Failure", message: error.localizedDescription)
         }
     }
 
-    fileprivate func saveFolders(with name: String? = nil) {
+    fileprivate func saveFolder(withString path: String) {
+        let folder = documentDir.appendingPathComponent(path, isDirectory: true)
 
-        // save folder to array, but make sure folder.name does not already exist.
-        if let name = name {
-            if !self.folders.contains(where: { ($0.name == name) }) {
-                self.folders.append(Folder(name: name, notes: nil))
-            } else {
-                alertWithOKButton(title: "Name Taken", message: "Please choose a different name.")
-            }
-        }
-
-        let jsonEncoder = JSONEncoder()
-
-        if let savedData = try? jsonEncoder.encode(folders) {
-            defaults.set(savedData, forKey: kNotesFolderKey)
-        } else {
-            alertWithOKButton(title: "Failure", message: "Failed to save folders.")
+        do {
+            try fileManager.createDirectory(at: folder, withIntermediateDirectories: false)
+            folders.append(folder)
+        } catch {
+            alertWithOKButton(title: "Name Taken", message: error.localizedDescription)
         }
     }
 
@@ -83,7 +77,7 @@ class FoldersViewController: BaseTableViewController {
         let save = UIAlertAction(title: "Save", style: .default, handler: { [weak self, weak dialog] (_) in
 
             let folder = dialog?.textFields?[0].text ?? "unknown"
-            self?.saveFolders(with: folder)
+            self?.saveFolder(withString: folder)
 
         })
 
@@ -119,12 +113,17 @@ class FoldersViewController: BaseTableViewController {
 
 extension FoldersViewController {
 
-    override func numberOfSections(in tableView: UITableView) -> Int { return 1 }
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return folders.count }
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return folders.count
+    }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let controller = NotesViewController()
-        controller.title = folders[indexPath.row].name
+        controller.title = folders[indexPath.row].lastPathComponent
         navigationController?.pushViewController(controller, animated: true)
     }
 
@@ -133,7 +132,7 @@ extension FoldersViewController {
         let cell = UITableViewCell(style: .value1, reuseIdentifier: "cell")
             cell.accessoryType = .disclosureIndicator
             cell.backgroundColor = .clear
-            cell.textLabel?.text = folder.name
+            cell.textLabel?.text = folder.lastPathComponent
             cell.detailTextLabel?.text = "0"
             cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .body)
         return cell
@@ -141,10 +140,19 @@ extension FoldersViewController {
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            folders.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
-            saveFolders()
-            if folders.isEmpty && isEditing { setEditing(false, animated: true)}
+            let folderToDelete = folders[indexPath.row]
+
+            do {
+                try fileManager.removeItem(at: folderToDelete)
+                folders.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .fade)
+
+                if folders.isEmpty && isEditing {
+                    setEditing(false, animated: true)
+                }
+            } catch {
+                alertWithOKButton(title: "Error Removing Folder", message: error.localizedDescription)
+            }
         }
     }
 }

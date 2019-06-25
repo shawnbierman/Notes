@@ -12,15 +12,13 @@ struct Note: Codable {
     let id: UUID
     let title: String
     let content: String
-    let folder: Folder
     let createDate: Date
     let lastUpdateDate: Date
 
-    init(title: String, content: String, folder: Folder) {
+    init(title: String, content: String) {
         self.id = UUID()
         self.title = title
         self.content = content
-        self.folder = folder
         self.createDate = Date()
         self.lastUpdateDate = Date()
     }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1FC7816F22BFECF4008ED90F /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC7816E22BFECF4008ED90F /* FileManager.swift */; };
 		1FF98E1D22B5471E00D5DFC5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF98E1C22B5471E00D5DFC5 /* AppDelegate.swift */; };
 		1FF98E2422B5471F00D5DFC5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FF98E2322B5471F00D5DFC5 /* Assets.xcassets */; };
 		1FF98E2722B5471F00D5DFC5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FF98E2522B5471F00D5DFC5 /* LaunchScreen.storyboard */; };
@@ -40,6 +41,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1FC7816E22BFECF4008ED90F /* FileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
 		1FF98E1922B5471E00D5DFC5 /* Notes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Notes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FF98E1C22B5471E00D5DFC5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1FF98E2322B5471F00D5DFC5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 		1FF98E5422B5478400D5DFC5 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				1FC7816E22BFECF4008ED90F /* FileManager.swift */,
 				1FF98E5622B5480F00D5DFC5 /* UIColor.swift */,
 				1FF98E5522B5478400D5DFC5 /* UIView.swift */,
 			);
@@ -323,6 +326,7 @@
 				1FF98E5722B5480F00D5DFC5 /* UIColor.swift in Sources */,
 				1FF98E5122B5477900D5DFC5 /* FoldersViewController.swift in Sources */,
 				1FF98E4E22B5477900D5DFC5 /* BaseTableViewController.swift in Sources */,
+				1FC7816F22BFECF4008ED90F /* FileManager.swift in Sources */,
 				1FF98E5C22B592B700D5DFC5 /* Note.swift in Sources */,
 				1FF98E4F22B5477900D5DFC5 /* NoteViewController.swift in Sources */,
 				1FF98E1D22B5471E00D5DFC5 /* AppDelegate.swift in Sources */,

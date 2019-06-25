@@ -10,6 +10,10 @@ import UIKit
 
 class NoteViewController: UIViewController {
 
+    var note: Note?
+    let defaults = UserDefaults.standard
+    let kNoteKey = "note"
+
     let backgroundView: UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFit
@@ -37,17 +41,56 @@ class NoteViewController: UIViewController {
         textview.becomeFirstResponder()
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        textview.resignFirstResponder()
+    }
+
     @objc fileprivate func handleActionButton() {
         dump("handleActionButton()")
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        guard let text = textview.text else { return }
+
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            dump("NODATA")
+        } else {
+            saveNote()
+        }
+    }
+
     @objc fileprivate func handleDoneButton() {
-        saveNote()
+        // should dim 'done' button,
+        // then resign first responder,
+        // but should NOT popViewController.
+        // that's not how native app behaves
+        // TODO: - Fix this
         navigationController?.popViewController(animated: true)
     }
 
     fileprivate func saveNote() {
-        dump("saveNote()")
+        guard let text = textview.text else { return }
+        dump("saveNote(): \(text)")
+
+        let jsonEncoder = JSONEncoder()
+
+        note = Note(title: "title string", content: text)
+
+        do {
+            let data = try jsonEncoder.encode(note)
+            defaults.set(data, forKey: kNoteKey)
+        } catch {
+            dump("ERROR: \(error.localizedDescription)")
+        }
+
+//        if let savedData = try? jsonEncoder.encode(note) {
+//            defaults.set(savedData, forKey: kNoteKey)
+//        } else {
+//            dump("failed to save")
+//        }
     }
 
     fileprivate func setupViews() {
@@ -57,7 +100,6 @@ class NoteViewController: UIViewController {
         backgroundView.fillSuperview()
 
         NSLayoutConstraint.activate([
-
             textview.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             textview.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             textview.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),

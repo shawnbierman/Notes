@@ -12,8 +12,10 @@ class NotesViewController: BaseTableViewController {
 
     let defaults = UserDefaults.standard
     let kNotesKey = "note"
+    let fileManager = FileManager.default
+    let documentDir = FileManager.documentDirectoryUrl
 
-    var notes = [Note]() {
+    var notes = [URL]() {
         didSet {
             if !notes.isEmpty {
                 DispatchQueue.main.async { [weak self] in
@@ -23,16 +25,30 @@ class NotesViewController: BaseTableViewController {
             }
         }
     }
+//    var notes = [Note]() {
+//        didSet {
+//            if !notes.isEmpty {
+//                DispatchQueue.main.async { [weak self] in
+//                    self?.navigationItem.rightBarButtonItem?.isEnabled = true
+//                    self?.tableView.reloadData()
+//                }
+//            }
+//        }
+//    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationAndToolBar()
-        loadNotes()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         dump("NotesViewController()")
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadNotes()
     }
 
     @objc internal func editNotesButtonTapped() {
@@ -41,18 +57,17 @@ class NotesViewController: BaseTableViewController {
 
     @objc fileprivate func createNewFile() {
         let controller = NoteViewController()
+        controller.folderName = self.title!
         navigationController?.pushViewController(controller, animated: true)
     }
 
     fileprivate func loadNotes() {
-        if let savedData = defaults.object(forKey: kNotesKey) as? Data {
-            let jsonDecoder = JSONDecoder()
-            do {
-                notes = try jsonDecoder.decode([Note].self, from: savedData)
-            } catch {
-                dump(error.localizedDescription)
-                dumpUserDefaults()
-            }
+        let url = documentDir.appendingPathComponent(self.title!, isDirectory: true)
+
+        do {
+            notes = try fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+        } catch {
+            alertWithOKButton(title: "Failed to Get File List", message: error.localizedDescription)
         }
     }
 
@@ -93,27 +108,18 @@ extension NotesViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let controller = NoteViewController()
+        let url = notes[indexPath.row].appendingPathExtension("txt")
+        controller.note = url
         navigationController?.pushViewController(controller, animated: true)
     }
-}
 
-extension NotesViewController {
-
-    func dumpUserDefaults() {
-        var defaultsDict = [String: Any]()
-        let defaults = UserDefaults.standard
-
-        defaults.dictionaryRepresentation().forEach { (key, value) in
-            defaultsDict[key] = value
-        }
-
-        var tmpArray = [String]()
-        for def in defaultsDict {
-            tmpArray.append("\(def.key): \(def.value)")
-        }
-
-        tmpArray.sort()
-        tmpArray.forEach { dump($0) }
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let note = notes[indexPath.row]
+        let cell = UITableViewCell(style: .value1, reuseIdentifier: "cell")
+            cell.accessoryType = .disclosureIndicator
+            cell.backgroundColor = .clear
+            cell.textLabel?.text = note.deletingPathExtension().lastPathComponent
+            cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+        return cell
     }
-
 }

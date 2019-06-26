@@ -10,9 +10,13 @@ import UIKit
 
 class NoteViewController: UIViewController {
 
-    var note: Note?
     let defaults = UserDefaults.standard
     let kNoteKey = "note"
+    let fileManager = FileManager.default
+    let documentDir = FileManager.documentDirectoryUrl
+
+    var note: URL?
+    var folderName: String?
 
     let backgroundView: UIImageView = {
         let iv = UIImageView()
@@ -46,20 +50,18 @@ class NoteViewController: UIViewController {
         textview.resignFirstResponder()
     }
 
-    @objc fileprivate func handleActionButton() {
-        dump("handleActionButton()")
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadNote()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        saveNote()
+    }
 
-        guard let text = textview.text else { return }
-
-        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            dump("NODATA")
-        } else {
-            saveNote()
-        }
+    @objc fileprivate func handleActionButton() {
+        dump("handleActionButton()")
     }
 
     @objc fileprivate func handleDoneButton() {
@@ -71,26 +73,26 @@ class NoteViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
 
+    fileprivate func loadNote() {
+        guard let note = note else { return }
+        print("loading note")
+        textview.text = "some stuff"
+//        let note = documentDir.appendingPathComponent(folderName!, isDirectory: true).appendingPathComponent(self.note!)
+
+    }
+
     fileprivate func saveNote() {
         guard let text = textview.text else { return }
-        dump("saveNote(): \(text)")
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
 
-        let jsonEncoder = JSONEncoder()
-
-        note = Note(title: "title string", content: text)
+        let title = text.components(separatedBy: " ").first!
+        let filename = documentDir.appendingPathComponent(folderName!).appendingPathComponent(title).appendingPathExtension("txt")
 
         do {
-            let data = try jsonEncoder.encode(note)
-            defaults.set(data, forKey: kNoteKey)
+            try text.write(to: filename, atomically: true, encoding: .utf8)
         } catch {
-            dump("ERROR: \(error.localizedDescription)")
+            alertWithOKButton(title: "Failed to Create", message: error.localizedDescription)
         }
-
-//        if let savedData = try? jsonEncoder.encode(note) {
-//            defaults.set(savedData, forKey: kNoteKey)
-//        } else {
-//            dump("failed to save")
-//        }
     }
 
     fileprivate func setupViews() {
@@ -113,5 +115,15 @@ class NoteViewController: UIViewController {
 
         navigationItem.rightBarButtonItems = [doneButton, actionButton]
         navigationItem.rightBarButtonItem?.tintColor = .gold
+    }
+
+    func alertWithOKButton(title: String, message: String) {
+        let ac = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+        ok.setValue(UIColor.gold, forKey: "titleTextColor")
+
+        ac.addAction(ok)
+
+        present(ac, animated: true)
     }
 }
